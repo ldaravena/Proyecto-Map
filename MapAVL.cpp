@@ -97,7 +97,7 @@ void MapAVL::balance(Nodo* n){
 
 void MapAVL::updateBalanceFactor(Nodo* n){
 	
-	if(abs(n->balance) >1) 	balance(n);
+	if(abs(n->balanceFactor) >1) balance(n);
 	
 	else if(n->father != NULL){
 
@@ -266,7 +266,7 @@ int MapAVL::at(std::string k){
 	}
 }
 
-void MapAVL::erase(string k){
+void MapAVL::erase(std::string k){
 
 	//Si la clave a buscar es menor al nodo actual
 	if( k < current->key ){
@@ -309,49 +309,120 @@ void MapAVL::erase(string k){
 	//En caso contrario la clave ingresada es igual a la del nodo actual
 	else{
 	
+		Nodo* balanceNode;
+	
+	
 		if(current->left == NULL && current->right == NULL){
 		
 			if(current == current->father->left){
 			
 				current->father->left = NULL;
-				delete current;
+				
+				current->father->balanceFactor +=1;
+				
 			}
 			
 			else if(current = current->father->right){
 			
 				current->father->right = NULL;
-				delete current;
+				
+				current->father->balanceFactor -=1;
+				
 			}
+			
+			
+			
+			balanceNode = current->father;
+			
+			delete current;
 		}
+		
 		
 		else if(current->left == NULL || current->right == NULL){
 		
 			if(current->left == NULL){
 			
 				current->father->right = current->right;
+				
 				current->right->father = current->father;
 				
-				delete current;
+				current->father->balanceFactor -=1;
+			
 			}
 			
 			else if(current->right == NULL){
 			
 				current->father->left = current->left;
+				
 				current->left->father = current->father;
 				
-				delete current;
+				current->father->balanceFactor +=1;
+			
 			}
+			
+			balanceNode = current->father;
+			
+			delete current;
 		}
 		
 		else{
-		
-			current = current->
+			
+			Nodo* newCurrent = current->right;
+	
+			
+			while(newCurrent->left!=NULL){
+			
+				newCurrent = newCurrent->left;
+			}
+			
+			if(newCurrent->right!=NULL){
+			
+				newCurrent->right->father = newCurrent->father;
+				
+				newCurrent->father->right = newCurrent->right;
+				
+				newCurrent->father->balanceFactor -=1;				
+								
+			//	balanceNode = newCurrent->right;
+				
+			}
+			
+			else{
+				
+				newCurrent->father->balanceFactor +=1;
+				
+//				balanceNode = newCurrent->father;
+			}
+			
+			balanceNode = newCurrent->father;
+			
+			newCurrent->father = current->father;
+			
+			newCurrent->left = current->left;
+			
+			newCurrent->right = current->right;
+			
+			newCurrent->balanceFactor = current->balanceFactor;
+			
+			
+			if(current == current->father->right){
+			
+				current->father->right = newCurrent;
+			}
+			
+			else if(current == current->father->left){
+			
+				current->father->left = newCurrent;
+			}
+			
+			delete current;						
 		
 		}
 		
-	
-	tam--;
-	
+		tam--;
+		
+		updateBalanceFactor(balanceNode);
+
 	}
 }
 
@@ -367,3 +438,8 @@ bool MapAVL::empty(){
 	return tam==0?true:false;
 }
 
+
+int MapAVL::bRoot(){
+
+	return root->balanceFactor;
+}

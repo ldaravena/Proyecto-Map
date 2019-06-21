@@ -48,11 +48,11 @@ void MapAVL::rightRotation(Nodo* a){
 
 	else if(a == a->father->right) a->father->right = b;
 	
-	b->father = a->father;
+	a->father = b->father;
 	
 	a->father = b;
 	
-	b->left = a;
+	b->right = a;
 	
 	a->balanceFactor += 1;
 	a->balanceFactor -= b->balanceFactor < 0?b->balanceFactor:0; 

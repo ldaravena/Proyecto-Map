@@ -7,9 +7,11 @@ struct Nodo{
 	//Valor del elemento
 	int data;
 	
-	int depth;
+	int height;
 	
-	int balanceFactor;
+	int diff;
+	
+	//int balanceFactor;
 	
 	//Puntero al padre y a los hijos
 	Nodo *father;
@@ -39,11 +41,20 @@ class MapAVL:public Map{
 		int tam;
 
 	public:
+	
 
 		MapAVL();
 		
-		void balance();
+		void balance(Nodo* n);
 		
+		void updateHeight(Nodo* n);
+		
+		void leftRotation(Nodo* n);
+		void rightRotation(Nodo* n);
+		
+		void leftRightRotation(Nodo* n);
+		void rightLeftRotation(Nodo* n);
+
 		void insert(std::pair<std::string,int> p);
 		int at(std::string k);
 		void erase(std::string k); 
